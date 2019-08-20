@@ -149,11 +149,11 @@ include_directories(
 #add_executable(show_movement src/show_movement.cpp)
 #add_executable(yuanzhui src/yuanzhui.cpp)
 #add_executable(first_movement src/first_movement.cpp)
+
+
+add_executable(movement1 src/movement_version1.cpp)
+
 add_executable(movement2 src/movement_version2.cpp)
-add_executable(movement3 src/movement_version3.cpp)
-add_executable(movement4 src/movement_version4.cpp)
-add_executable(movement5 src/movement_version5.cpp)
-add_executable(movement6 src/movement_version6.cpp)
 #add_executable(polar_rose src/polar_rose.cpp)
 
 
@@ -177,19 +177,14 @@ add_executable(movement6 src/movement_version6.cpp)
 # target_link_libraries(first_movement
 #   ${catkin_LIBRARIES}
 #)
- target_link_libraries(movement2
+
+
+ target_link_libraries(movement1
    ${catkin_LIBRARIES}
 )
- target_link_libraries(movement3
-   ${catkin_LIBRARIES}
-)
- target_link_libraries(movement4
-   ${catkin_LIBRARIES}
-)
- target_link_libraries(movement5
-   ${catkin_LIBRARIES}
-)
-target_link_libraries(movement6
+
+
+target_link_libraries(movement2
    ${catkin_LIBRARIES}
 )
 

@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/invite/moveit_ws/devel/include",
+                "/home/invite/catkin_ws/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/invite/catkin_ws/src/drum_automation/include",
+                "/home/invite/catkin_ws/src/invite-robotics/invite_utils/include",
+                "/home/invite/catkin_ws/src/invite-robotics/invite_vision/include",
+                "/home/invite/catkin_ws/src/motoman/motoman_driver/include",
+                "/home/invite/catkin_ws/src/robotiq_2finger_grippers/robotiq_2f_gripper_control/include",
+                "/home/invite/catkin_ws/src/audio_common/sound_play/include",
+                "/usr/include",
+                "/usr/include/eigen3"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

@@ -16,6 +16,7 @@
 #include <moveit_msgs/AttachedCollisionObject.h>
 #include <moveit_msgs/CollisionObject.h>
 
+
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <invite_utils/cartesian_task_planner.h>
 
@@ -40,15 +41,16 @@ int main(int argc, char **argv)
     visual_tools_.reset(new moveit_visual_tools::MoveItVisualTools("base_link"));
     visual_tools_->deleteAllMarkers();
 
-    geometry_msgs::Pose p1;
-    tf2::Quaternion orientation_p1;
-    orientation_p1.setRPY(225 * M_PI / 180, 0, 0);
-    p1.position.x = 0.65;
-    p1.position.y = 0.85;
-    p1.position.z = 0.3;
-    p1.orientation = tf2::toMsg(orientation_p1);
     
-    std::vector<geometry_msgs::Pose> waypoints = ComputeWaypoints(0.06,p1);
+    geometry_msgs::Pose p1, temp_p;
+    tf2::Quaternion orientation_p1;
+    orientation_p1.setRPY(270 * M_PI / 180, M_PI, 0);
+    p1.position.x = 0.3;
+    p1.position.y = 0.65;
+    p1.position.z = 0.4;
+    p1.orientation = tf2::toMsg(orientation_p1);
+
+    std::vector<geometry_msgs::Pose> waypoints = ComputeWaypoints(0.12,p1);
     MoveRobot(waypoints);
 
 
@@ -59,57 +61,56 @@ std::vector<geometry_msgs::Pose> ComputeWaypoints(float r, geometry_msgs::Pose& 
 
 {
     std::vector<geometry_msgs::Pose> waypoints;
-    //waypoints.push_back(p1);
-   
-    geometry_msgs::Pose temp_p;
-    Eigen::Affine3d temp, rot1, rot2, rot3, rot4;
+    waypoints.push_back(p1);
+    geometry_msgs::Pose temp_p; 
+
+    Eigen::Affine3d initial, temp, rot1, rot2;
     tf2::fromMsg(p1, temp);
-
+    tf2::fromMsg(p1, initial);
+   
     rot1.linear().setIdentity();
-    rot1.rotate(Eigen::AngleAxis<double>(18 * M_PI / 180, Eigen::Vector3d(0, 1, 0)));
+    rot1.rotate(Eigen::AngleAxis<double>(20 * M_PI / 180, Eigen::Vector3d(0, 1, 0)));
     rot2.linear().setIdentity();
-    rot2.rotate(Eigen::AngleAxis<double>(-18 * M_PI / 180, Eigen::Vector3d(0, 1, 0)));
-    rot3.linear().setIdentity();
-    rot3.rotate(Eigen::AngleAxis<double>(-45 * M_PI / 180, Eigen::Vector3d(0, 0, 1)));
-    rot4.linear().setIdentity();
-    rot4.rotate(Eigen::AngleAxis<double>(45 * M_PI / 180, Eigen::Vector3d(0, 0, 1)));
+    rot2.rotate(Eigen::AngleAxis<double>(-20 * M_PI / 180, Eigen::Vector3d(0, 1, 0)));
+   
 
-   
-    for (float alpha = -180; alpha < 180; alpha += 20)
-   
+    for (float alpha = 20; alpha < 380; alpha += 20)
+    
     {
+
         temp.prerotate(rot1.linear());
-        temp.prerotate(rot3.linear());
-        temp.translation() = Eigen::Vector3d(p1.position.x - r * (180 - abs(alpha)) / 180, p1.position.y - r * (180 - abs(alpha)) / 180, p1.position.z);
-        temp_p = tf2::toMsg(temp);                
+        temp.translation() = initial.linear().inverse() * Eigen::Vector3d(r * cos((180 + alpha) * M_PI / 180) + r, 0.5 * r * sin((180 + alpha) * M_PI / 180), 0) + initial.translation();
+    
+        temp_p = tf2::toMsg(temp);
+
         waypoints.push_back(temp_p);
-       
+
         visual_tools_->publishAxis(temp);
         visual_tools_->trigger();
-        
-        temp.prerotate(rot4.linear());
-
-        if (alpha == 160)
+        //ros::Duration(1.0).sleep();
+       
+        if (alpha == 360)
         {
-            for (float beta = -180; beta < 180; beta += 20)
            
+            for (float beta = 20; beta < 380; beta += 20)
             {
                 temp.prerotate(rot2.linear());
-                temp.prerotate(rot3.linear());
-                temp.translation() = Eigen::Vector3d(p1.position.x + r * (180 - abs(beta)) / 180, p1.position.y + r * (180 - abs(beta)) / 180, p1.position.z);
+                temp.translation() = initial.linear().inverse() * Eigen::Vector3d(r * cos((360 - beta) * M_PI / 180) - r, 0.5 * r * sin((360 - beta) * M_PI / 180), 0) + initial.translation();
 
                 temp_p = tf2::toMsg(temp);
                 waypoints.push_back(temp_p);
+
                 visual_tools_->publishAxis(temp);
                 visual_tools_->trigger();
-                 
-                temp.prerotate(rot4.linear());
-                
+                //ros::Duration(1.0).sleep();
+                //ROS_WARN_STREAM(__LINE__);
             }
         }
-    }
-
+    }  
+    
+    ROS_INFO("waypoints have %d points",waypoints.size());
     return waypoints;
+
 }
 
 
@@ -194,22 +195,3 @@ void MoveRobot(std::vector<geometry_msgs::Pose>& points)
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-   
-
